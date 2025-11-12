@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: phishing-detection-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter  # Free tier - upgrade to paid for better performance
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: ALLOWED_ORIGINS
+        value: "*"  # Change this to your Chrome extension ID after publishing
+    healthCheckPath: /health
+    autoDeploy: true
+

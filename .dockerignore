@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Testing
+test_*.py
+*.test.py
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation
+*.md
+!README.md
+*.pdf
+*.txt
+!requirements.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Batch files
+*.bat
+*.sh
+
+# Jupyter notebooks
+*.ipynb
+
+# CSV data files
+*.csv
+
+# Transformer models (will download at runtime)
+transformer/
+
+# Temporary files
+*.tmp
+*.log
+
+# Extension files (not needed in backend)
+*.html
+*.js
+manifest.json
+background.js
+content.js
+popup.*
+warning.*
+featureExtractor.js
+test.html
+mock_phishing_site.html
+

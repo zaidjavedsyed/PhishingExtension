@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Phishing Website Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        .last-updated {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Privacy Policy for Phishing Website Detector</h1>
+    <p class="last-updated"><strong>Last Updated:</strong> [INSERT DATE]</p>
+    
+    <h2>Introduction</h2>
+    <p>Phishing Website Detector ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect information when you use our Chrome extension.</p>
+    
+    <h2>Data Collection</h2>
+    <p>Our extension collects minimal data necessary for its functionality:</p>
+    <ul>
+        <li><strong>URLs:</strong> URLs of websites you visit are sent to our secure API server for phishing analysis. This is necessary to detect potential phishing attempts.</li>
+        <li><strong>No Personal Data:</strong> We do not collect, store, or transmit any personal information, browsing history, login credentials, or any other identifiable data.</li>
+        <li><strong>Local Storage:</strong> Extension settings, whitelist, and statistics are stored locally in your browser. This data never leaves your device.</li>
+    </ul>
+    
+    <h2>How We Use Data</h2>
+    <p>URLs are analyzed using machine learning models (XGBoost and BERT) to detect phishing attempts. The analysis process:</p>
+    <ul>
+        <li>Extracts features from the URL (structure, domain information, etc.)</li>
+        <li>Runs the URL through our machine learning models</li>
+        <li>Returns a phishing probability score</li>
+        <li>Does not store the URL or analysis results on our servers</li>
+    </ul>
+    
+    <h2>Data Storage</h2>
+    <p>All extension data is stored locally in your browser:</p>
+    <ul>
+        <li>Whitelist of trusted sites</li>
+        <li>Extension settings and preferences</li>
+        <li>Statistics (sites checked, threats blocked)</li>
+    </ul>
+    <p>This data is stored using Chrome's local storage API and never transmitted to our servers.</p>
+    
+    <h2>Third-Party Services</h2>
+    <p>We use the following third-party services:</p>
+    <ul>
+        <li><strong>Render.com:</strong> Hosts our API server. URLs are sent to this service for analysis only. Render's privacy policy applies to their infrastructure.</li>
+        <li><strong>HuggingFace:</strong> BERT model is downloaded from HuggingFace model hub. This happens server-side and does not involve your data.</li>
+    </ul>
+    
+    <h2>Data Security</h2>
+    <p>We implement security measures to protect your data:</p>
+    <ul>
+        <li>All API communications use HTTPS encryption</li>
+        <li>URLs are analyzed and immediately discarded (not stored)</li>
+        <li>No persistent logging of URLs or analysis results</li>
+        <li>API server is secured and monitored</li>
+    </ul>
+    
+    <h2>Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+        <li>Disable the extension at any time</li>
+        <li>Clear local storage data through Chrome settings</li>
+        <li>Remove the extension completely</li>
+    </ul>
+    
+    <h2>Children's Privacy</h2>
+    <p>Our extension is not intended for children under 13. We do not knowingly collect information from children.</p>
+    
+    <h2>Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last Updated" date. You are advised to review this Privacy Policy periodically.</p>
+    
+    <h2>Contact Us</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+    <p><strong>Email:</strong> [INSERT YOUR EMAIL]<br>
+    <strong>GitHub:</strong> [INSERT YOUR GITHUB PROFILE/REPO]</p>
+    
+    <hr>
+    <p><em>This privacy policy is effective as of [INSERT DATE] and applies to all users of the Phishing Website Detector Chrome extension.</em></p>
+</body>
+</html>
+

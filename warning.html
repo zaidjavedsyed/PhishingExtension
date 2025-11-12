@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-hashes'; object-src 'none';">
+    <title>Phishing Website Detected - Warning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .warning-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .warning-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .url-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .url-text {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            word-break: break-all;
+            font-size: 14px;
+        }
+
+        .confidence-bar {
+            margin: 20px 0;
+        }
+
+        .confidence-label {
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .confidence-meter {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            background: linear-gradient(90deg, #ff6b6b, #d32f2f);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+
+        .warning-message h3 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .features-detected {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .features-detected h4 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: "⚠️ ";
+            margin-right: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .warning-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-container">
+        <div class="warning-icon">🚨</div>
+        <h1>Phishing Website Detected</h1>
+        <p class="subtitle">
+            This website has been identified as potentially malicious by our machine learning model.
+            We strongly recommend that you do not proceed.
+        </p>
+
+        <div class="url-info">
+            <strong>Suspicious URL:</strong><br>
+            <span class="url-text" id="suspicious-url">Loading...</span>
+        </div>
+
+        <div class="confidence-bar">
+            <div class="confidence-label">Threat Level:</div>
+            <div class="confidence-meter">
+                <div class="confidence-fill" id="confidence-fill"></div>
+            </div>
+            <div id="confidence-text">Loading...</div>
+        </div>
+
+        <div class="warning-message">
+            <h3>⚠️ Why is this dangerous?</h3>
+            <p>
+                Phishing websites are designed to steal your personal information, passwords, 
+                and financial data. They often mimic legitimate websites to trick you into 
+                entering sensitive information.
+            </p>
+        </div>
+
+        <div class="features-detected" id="features-detected" style="display: none;">
+            <h4>Suspicious Features Detected:</h4>
+            <ul class="feature-list" id="feature-list">
+                <!-- Features will be populated by JavaScript -->
+            </ul>
+        </div>
+
+        <div class="deep-dive-section" id="deep-dive-section" style="display: none;">
+            <h4>🔬 Deep Dive Analysis (BERT)</h4>
+            <div class="deep-dive-content" id="deep-dive-content">
+                <!-- Deep dive results will be populated here -->
+            </div>
+        </div>
+
+        <div class="explain-section" id="explain-section" style="display: none;">
+            <h4>📊 Feature Importance Analysis (SHAP)</h4>
+            <div class="explain-content" id="explain-content">
+                <!-- Explainability results will be populated here -->
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-danger" id="goBackBtn">
+                🚪 Go Back
+            </button>
+            <button class="btn btn-info" id="deepDiveBtn">
+                🔬 Deep Dive Analysis
+            </button>
+            <button class="btn btn-secondary" id="explainBtn">
+                📊 Why This Prediction?
+            </button>
+            <button class="btn btn-secondary" id="goHomeBtn">
+                🏠 Go to Homepage
+            </button>
+            <button class="btn btn-success" id="proceedBtn">
+                ⚠️ Proceed Anyway
+            </button>
+        </div>
+
+        <div class="footer">
+            <p>
+                <strong>Phishing Website Detector</strong><br>
+                Powered by Machine Learning | Version 1.0
+            </p>
+            <p style="margin-top: 10px;">
+                This warning is generated by analyzing URL features and content patterns 
+                using our trained XGBoost model.
+            </p>
+        </div>
+    </div>
+
+    <script src="warning.js"></script>
+</body>
+</html>

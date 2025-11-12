@@ -1,0 +1,356 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PHISHING DETECTION SYSTEM ARCHITECTURE                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+                                    USER
+                                    │
+                                    ▼
+                          ┌─────────────────────┐
+                          │  Chrome Browser      │
+                          │  (Extension Loaded) │
+                          └─────────────────────┘
+                                    │
+                                    ▼
+                    ┌───────────────────────────────┐
+                    │  background.js                │
+                    │  (Service Worker)             │
+                    │  • Tab updates                │
+                    │  • Message routing            │
+                    │  • API calls                  │
+                    └───────────────────────────────┘
+                                    │
+                                    │ HTTP Request
+                                    ▼
+                    ┌───────────────────────────────┐
+                    │  FastAPI Backend (port 8000)   │
+                    │  backend.py                    │
+                    └───────────────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    │               │               │
+                    ▼               ▼               ▼
+        ┌─────────────────┐ ┌─────────────┐ ┌──────────────────┐
+        │  XGBoost Model  │ │  SHAP       │ │  BERT Model      │
+        │                 │ │  Explainer  │ │                  │
+        │  • 16 features  │ │             │ │  • Hugging Face  │
+        │  • 86.4% acc    │ │  • Tree     │ │  • Content       │
+        │  • Fast         │ │    Explainer│ │    Analysis       │
+        └─────────────────┘ └─────────────┘ └──────────────────┘
+                    │               │               │
+                    │               │               │
+                    └───────────────┼───────────────┘
+                                    │
+                                    ▼
+                    ┌───────────────────────────────┐
+                    │  Response to Extension         │
+                    │  • Prediction result            │
+                    │  • Feature importance (SHAP)   │
+                    │  • Content analysis (BERT)      │
+                    └───────────────────────────────┘
+                                    │
+                                    ▼
+                    ┌───────────────────────────────┐
+                    │  popup.js / warning.js        │
+                    │  (Display Results)             │
+                    │                                │
+                    │  • Phishing detection status   │
+                    │  • Feature list                │
+                    │  • SHAP explanation            │
+                    │  • BERT deep dive              │
+                    └───────────────────────────────┘
+                                    │
+                                    ▼
+                                    USER
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           DATA FLOW - XGBOOST PATH                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+User Visits URL
+      │
+      ▼
+Extract 16 Features
+      │
+      ├─→ Have_IP?
+      ├─→ Have_At?
+      ├─→ URL_Length > 75?
+      ├─→ URL_Depth > 4?
+      ├─→ Redirection patterns?
+      ├─→ https in domain?
+      ├─→ TinyURL service?
+      ├─→ Hyphens in domain?
+      ├─→ DNS Record?
+      ├─→ Web Traffic?
+      ├─→ Domain Age?
+      ├─→ Domain End?
+      ├─→ iFrame usage?
+      ├─→ Mouse_Over scripts?
+      ├─→ Right Click disabled?
+      └─→ Web Forwards?
+      │
+      ▼
+[16 Feature Values]
+      │
+      ▼
+XGBoost Model Predicts
+      │
+      ├─→ Probability of Phishing
+      ├─→ Confidence Score
+      └─→ Feature Names
+      │
+      ▼
+If phishing_probability > 0.9:
+      │
+      ├─→ Block Navigation
+      └─→ Redirect to warning.html
+Else:
+      └─→ Allow Navigation
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           DATA FLOW - SHAP PATH                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+User Clicks "Why This Prediction?"
+      │
+      ▼
+Send URL to /explain endpoint
+      │
+      ▼
+Extract 16 Features (same as XGBoost)
+      │
+      ▼
+Create SHAP TreeExplainer
+      │
+explaner = shap.TreeExplainer(model)
+      │
+      ▼
+Calculate SHAP Values
+      │
+shap_values = explainer.shap_values(features)
+      │
+      ▼
+For each of 16 features:
+      │
+      ├─→ Calculate contribution
+      ├─→ Sort by importance
+      └─→ Generate summary
+      │
+      ▼
+Return to Extension:
+      │
+      ├─→ Feature name
+      ├─→ Feature value
+      ├─→ SHAP importance
+      ├─→ Contribution score
+      └─→ Rank (1-16)
+      │
+      ▼
+Display in Popup:
+      │
+      ├─→ 🔴 Top risk-increasing features
+      ├─→ 🟢 Top protective features
+      └─→ Human-readable explanation
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           DATA FLOW - BERT PATH                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+User Clicks "🔬 Deep Dive Analysis"
+      │
+      ▼
+Send URL to /deep-dive endpoint
+      │
+      ▼
+Fetch HTML Content
+      │
+requests.get(url)
+      │
+      ▼
+Extract Text Using BeautifulSoup
+      │
+soup = BeautifulSoup(html, 'html.parser')
+text = soup.get_text()
+      │
+      ▼
+Prepare for BERT
+      │
+analysis_text = f"URL: {url}\nContent: {text}"
+      │
+      ▼
+Tokenize with BERT Tokenizer
+      │
+inputs = bert_tokenizer(analysis_text)
+      │
+      ▼
+Run BERT Inference
+      │
+with torch.no_grad():
+    outputs = bert_model(**inputs)
+    predictions = softmax(outputs.logits)
+      │
+      ▼
+Extract Results
+      │
+phishing_score = predictions[1]
+legitimate_score = predictions[0]
+      │
+      ▼
+Return to Extension:
+      │
+      ├─→ is_phishing (bool)
+      ├─→ confidence
+      ├─→ bert_scores (phishing/legitimate)
+      ├─→ text_content (first 500 chars)
+      └─→ analysis_details
+      │
+      ▼
+Display in Popup:
+      │
+      ├─→ 🔬 BERT Analysis Results
+      ├─→ Phishing Score: X%
+      ├─→ Legitimate Score: Y%
+      └─→ Analyzed content preview
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         THREE-MODEL INTEGRATION                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+                           ┌─────────────┐
+                           │    URL      │
+                           │  (Input)    │
+                           └──────┬──────┘
+                                  │
+                  ┌───────────────┼───────────────┐
+                  │               │               │
+                  ▼               ▼               ▼
+          ┌───────────────┐  ┌───────────┐  ┌───────────────┐
+          │   XGBOOST     │  │   SHAP    │  │     BERT       │
+          │   Model       │  │           │  │    Model       │
+          │               │  │           │  │                │
+          │ • Fast        │  │ • Explains│  │ • Content      │
+          │ • 16 Features │  │ • Features│  │ • Language     │
+          │ • Real-time   │  │ • Why?    │  │ • Deep         │
+          └───────┬───────┘  └────┬──────┘  └───────┬───────┘
+                  │               │                  │
+                  ▼               ▼                  ▼
+          ┌───────────────┐  ┌───────────┐  ┌───────────────┐
+          │  Prediction   │  │  Feature  │  │  Content      │
+          │  (0.92)       │  │  Import.  │  │  Analysis     │
+          │               │  │           │  │                │
+          │ • is_phishing │  │ • Top 5   │  │ • Phishing    │
+          │ • confidence  │  │   features│  │   Score: 94%  │
+          │ • probability │  │ • Values  │  │ • Text preview │
+          └───────┬───────┘  │ • Ranks   │  └───────┬───────┘
+                  │          └─────┬─────┘          │
+                  │                │                │
+                  └────────────────┼────────────────┘
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │    POPUP UI     │
+                          │                 │
+                          │ ✅ Safe/Phishing│
+                          │ 📊 Why? (SHAP)  │
+                          │ 🔬 Deep (BERT)  │
+                          └─────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            API ENDPOINTS                                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+GET  /health
+     → Check if model loaded
+     → Returns: {status, model_loaded, version}
+
+POST /predict
+     → Main phishing detection
+     → Input:  {url: string}
+     → Output: {is_phishing, confidence, features, feature_names}
+
+POST /explain
+     → SHAP explainability
+     → Input:  {url: string}
+     → Output: {feature_importance[], summary}
+
+POST /deep-dive
+     → BERT content analysis
+     → Input:  {url: string}
+     → Output: {is_phishing, bert_scores, text_content}
+
+GET  /features/{url}
+     → Extract features only (no prediction)
+
+POST /predict-features
+     → Predict from pre-extracted features
+     → Input: {url, features[]}
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         SHAP OUTPUT EXAMPLE                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+URL: https://secure-paypal-verification-center.com
+
+Model predicts: PHISHING (92% confidence)
+
+Top Contributing Features (SHAP Values):
+═══════════════════════════════════════════════════════════════
+Rank  Feature        Value  Importance  Contribution
+═══════════════════════════════════════════════════════════════
+ 1    URL_Length        1    +6.91      Increases risk
+ 2    URL_Depth         1    +0.75      Increases risk
+ 3    TinyURL           1    +0.62      Increases risk
+ 4    Have_IP           1    +0.58      Increases risk
+ 5    URL_Depth         1    +0.55      Increases risk
+ --------------------------------------------------------------
+ 6    Domain_End        0    -0.51      Decreases risk
+ 7    DNS_Record        0    -0.42      Decreases risk
+ 8    Web_Traffic        0    -0.38      Decreases risk
+═══════════════════════════════════════════════════════════════
+
+Summary:
+"The model predicts this URL as PHISHING with 92% confidence. 
+Top contributing factors: URL_Length, URL_Depth, TinyURL. 
+Protective factors: Valid domain extension, DNS records present."
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         BERT OUTPUT EXAMPLE                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+URL: https://secure-paypal-verification-center.com
+
+🔬 BERT Deep Dive Analysis Results:
+═══════════════════════════════════════════════════════════════
+
+Result: 🚨 PHISHING DETECTED (95% confidence)
+
+BERT Scores:
+• Phishing Score:     94.2%
+• Legitimate Score:    5.8%
+
+Model: BERT (ealvaradob/bert-finetuned-phishing)
+
+Analyzed Content:
+"URGENT: Your PayPal account has been temporarily suspended.
+Please click here to verify your identity immediately.
+Failure to respond within 24 hours will result in account closure.
+Enter your password and SSN to restore access."
+
+Analysis Details:
+• Text Length: 1,234 characters
+• HTML Length: 5,678 characters
+• Susceptious Patterns Detected:
+  - Urgent language
+  - Identity verification request
+  - Threat of consequences
+  - Request for sensitive information
+
+═══════════════════════════════════════════════════════════════
+
+

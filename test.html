@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detector Extension Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .test-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .test-link {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .test-link:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .safe-link {
+            border-left: 4px solid #28a745;
+        }
+        .suspicious-link {
+            border-left: 4px solid #dc3545;
+        }
+        .link-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .link-description {
+            font-size: 14px;
+            color: #666;
+        }
+        .instructions {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .instructions h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .status.safe {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status.warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .status.danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Phishing Detector Extension Test Page</h1>
+        
+        <div class="instructions">
+            <h3>📋 Testing Instructions</h3>
+            <ol>
+                <li>Make sure the Phishing Detector extension is installed and enabled</li>
+                <li>Click on the test links below to see how the extension responds</li>
+                <li>Check the extension popup to see analysis results</li>
+                <li>Test both safe and suspicious links to verify functionality</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ Safe Websites (Should NOT trigger warnings)</h2>
+            <div class="test-links">
+                <a href="https://www.google.com" class="test-link safe-link">
+                    <div class="link-title">Google</div>
+                    <div class="link-description">Legitimate search engine</div>
+                </a>
+                <a href="https://www.github.com" class="test-link safe-link">
+                    <div class="link-title">GitHub</div>
+                    <div class="link-description">Code repository platform</div>
+                </a>
+                <a href="https://www.stackoverflow.com" class="test-link safe-link">
+                    <div class="link-title">Stack Overflow</div>
+                    <div class="link-description">Programming Q&A site</div>
+                </a>
+                <a href="https://www.wikipedia.org" class="test-link safe-link">
+                    <div class="link-title">Wikipedia</div>
+                    <div class="link-description">Online encyclopedia</div>
+                </a>
+                <a href="https://www.microsoft.com" class="test-link safe-link">
+                    <div class="link-title">Microsoft</div>
+                    <div class="link-description">Technology company</div>
+                </a>
+                <a href="https://www.apple.com" class="test-link safe-link">
+                    <div class="link-title">Apple</div>
+                    <div class="link-description">Technology company</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚠️ Suspicious Websites (Should trigger warnings)</h2>
+            <div class="test-links">
+                <a href="http://bit.ly/suspicious-test" class="test-link suspicious-link">
+                    <div class="link-title">Bit.ly Shortened URL</div>
+                    <div class="link-description">URL shortening service (suspicious)</div>
+                </a>
+                <a href="http://192.168.1.1/login" class="test-link suspicious-link">
+                    <div class="link-title">IP Address URL</div>
+                    <div class="link-description">Direct IP address (suspicious)</div>
+                </a>
+                <a href="https://fake-bank.com@real-bank.com" class="test-link suspicious-link">
+                    <div class="link-title">At Symbol URL</div>
+                    <div class="link-description">Contains @ symbol (suspicious)</div>
+                </a>
+                <a href="http://very-long-suspicious-domain-name-that-is-definitely-not-legitimate.com/verify/account/urgent/action/required" class="test-link suspicious-link">
+                    <div class="link-title">Long Suspicious URL</div>
+                    <div class="link-description">Very long URL (suspicious)</div>
+                </a>
+                <a href="https://suspicious-site-with-dashes.com/verify-account" class="test-link suspicious-link">
+                    <div class="link-title">Domain with Dashes</div>
+                    <div class="link-description">Domain contains dashes (suspicious)</div>
+                </a>
+                <a href="http://tinyurl.com/suspicious" class="test-link suspicious-link">
+                    <div class="link-title">TinyURL Service</div>
+                    <div class="link-description">URL shortening service (suspicious)</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Extension Testing</h2>
+            <div class="status" id="extension-status">
+                <h3>Extension Status</h3>
+                <p>Click the extension icon to check if it's working properly</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="testExtension()" style="
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                ">
+                    🔍 Test Extension Analysis
+                </button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Expected Results</h2>
+            <div class="test-links">
+                <div class="test-link">
+                    <div class="link-title">Safe Websites</div>
+                    <div class="link-description">
+                        • Should show green "Safe Website" indicator<br>
+                        • No warning pages should appear<br>
+                        • Popup should show low threat score
+                    </div>
+                </div>
+                <div class="test-link">
+                    <div class="link-title">Suspicious Websites</div>
+                    <div class="link-description">
+                        • Should show red "Phishing Detected" warning<br>
+                        • Warning page should appear<br>
+                        • Popup should show high threat score
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testExtension() {
+            const statusDiv = document.getElementById('extension-status');
+            
+            // Check if extension is installed
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                statusDiv.className = 'status safe';
+                statusDiv.innerHTML = `
+                    <h3>✅ Extension Detected</h3>
+                    <p>Phishing Detector extension is installed and running</p>
+                `;
+            } else {
+                statusDiv.className = 'status warning';
+                statusDiv.innerHTML = `
+                    <h3>⚠️ Extension Not Detected</h3>
+                    <p>Make sure the Phishing Detector extension is installed and enabled</p>
+                `;
+            }
+        }
+
+        // Test extension on page load
+        window.addEventListener('load', () => {
+            setTimeout(testExtension, 1000);
+        });
+
+        // Add click tracking for test links
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const isSuspicious = this.classList.contains('suspicious-link');
+                const linkTitle = this.querySelector('.link-title').textContent;
+                
+                console.log(`Testing ${isSuspicious ? 'suspicious' : 'safe'} link: ${linkTitle}`);
+                
+                // Let the extension handle the analysis
+                // Don't prevent default behavior
+            });
+        });
+    </script>
+</body>
+</html>
+
