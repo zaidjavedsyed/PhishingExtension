@@ -10,6 +10,6 @@ beautifulsoup4==4.12.2
 python-whois==0.8.0
 lxml==4.9.3
 python-multipart==0.0.6
-transformers==4.35.2
-torch==2.1.1
+# transformers==4.35.2  # Removed - optional, causes timeout on free tier
+# torch==2.1.1  # Removed - optional, causes timeout on free tier
 shap==0.44.0

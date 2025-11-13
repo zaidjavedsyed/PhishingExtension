@@ -16,12 +16,29 @@ import whois
 from typing import List, Dict, Any
 import uvicorn
 from contextlib import asynccontextmanager
-import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import warnings
-import shap
 import os
 warnings.filterwarnings("ignore")
+
+# Optional imports for BERT (will gracefully fail if not installed)
+try:
+    import torch
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+    BERT_AVAILABLE = True
+except ImportError:
+    torch = None
+    AutoTokenizer = None
+    AutoModelForSequenceClassification = None
+    BERT_AVAILABLE = False
+    print("⚠️ BERT dependencies not installed. Deep dive analysis will use fallback.")
+
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    shap = None
+    SHAP_AVAILABLE = False
+    print("⚠️ SHAP not installed. Explainability features will be limited.")
 
 # Global variables to store the loaded models
 model = None
@@ -256,8 +273,15 @@ feature_names = ['Have_IP', 'Have_At', 'URL_Length', 'URL_Depth','Redirection',
                  'Domain_Age', 'Domain_End', 'iFrame', 'Mouse_Over','Right_Click', 'Web_Forwards']
 
 def load_bert_model():
-    """Load the BERT model for deep dive analysis (optional, will gracefully fail if out of memory)"""
+    """Load the BERT model for deep dive analysis (optional, will gracefully fail if not available)"""
     global bert_model, bert_tokenizer
+    
+    if not BERT_AVAILABLE:
+        print("⚠️ BERT dependencies not installed. Deep dive analysis will use pattern-based fallback.")
+        bert_model = None
+        bert_tokenizer = None
+        return False
+    
     try:
         print("Loading BERT model for phishing detection...")
         model_name = "ealvaradob/bert-finetuned-phishing"
@@ -758,6 +782,9 @@ async def explain_prediction(request: URLRequest):
             is_phishing = phishing_probability > 0.8
         
         # Create SHAP explainer (TreeExplainer for XGBoost)
+        if not SHAP_AVAILABLE:
+            raise HTTPException(status_code=503, detail="SHAP library not available. Explainability feature disabled.")
+        
         explainer = shap.TreeExplainer(model)
         
         # Calculate SHAP values
