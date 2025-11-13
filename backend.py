@@ -256,7 +256,7 @@ feature_names = ['Have_IP', 'Have_At', 'URL_Length', 'URL_Depth','Redirection',
                  'Domain_Age', 'Domain_End', 'iFrame', 'Mouse_Over','Right_Click', 'Web_Forwards']
 
 def load_bert_model():
-    """Load the BERT model for deep dive analysis"""
+    """Load the BERT model for deep dive analysis (optional, will gracefully fail if out of memory)"""
     global bert_model, bert_tokenizer
     try:
         print("Loading BERT model for phishing detection...")
@@ -269,11 +269,18 @@ def load_bert_model():
         # Set model to evaluation mode
         bert_model.eval()
         
-        print("BERT model loaded successfully!")
+        print("✅ BERT model loaded successfully!")
         return True
         
+    except MemoryError as e:
+        print(f"⚠️ BERT model loading failed due to insufficient memory: {e}")
+        print("⚠️ Deep dive analysis will use pattern-based fallback. Main XGBoost detection still works.")
+        bert_model = None
+        bert_tokenizer = None
+        return False
     except Exception as e:
-        print(f"Error loading BERT model: {e}")
+        print(f"⚠️ BERT model loading failed: {e}")
+        print("⚠️ Deep dive analysis will use pattern-based fallback. Main XGBoost detection still works.")
         bert_model = None
         bert_tokenizer = None
         return False
@@ -324,8 +331,13 @@ async def load_model():
                     with open(model_file, 'rb') as f:
                         model = pickle.load(f)
                     print(f"✅ Model loaded from {model_file}!")
-                    # Also load BERT model for deep dive analysis
-                    load_bert_model()
+                    # Also try to load BERT model for deep dive analysis (optional)
+                    # If it fails due to memory, API will still work with XGBoost
+                    try:
+                        load_bert_model()
+                    except Exception as e:
+                        print(f"⚠️ BERT model not loaded (non-critical): {e}")
+                        print("✅ API will continue with XGBoost model only")
                     return True
                     
             except FileNotFoundError:
@@ -421,9 +433,20 @@ async def root():
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
     """Health check endpoint"""
+    # XGBoost model is required, BERT is optional
+    xgboost_loaded = model is not None
+    bert_loaded = bert_model is not None and bert_tokenizer is not None
+    
+    if xgboost_loaded:
+        status = "healthy"
+        if not bert_loaded:
+            status = "healthy (BERT unavailable - using fallback)"
+    else:
+        status = "unhealthy"
+    
     return HealthResponse(
-        status="healthy",
-        model_loaded=model is not None,
+        status=status,
+        model_loaded=xgboost_loaded,  # Main model status
         version="1.0.0"
     )
 
